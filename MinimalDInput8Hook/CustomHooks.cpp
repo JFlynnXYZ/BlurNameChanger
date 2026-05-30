@@ -12,64 +12,38 @@ BOOL WINAPI GetUserNameA_Wrapper(
 	LPDWORD               pcbBuffer
 )
 {
-	HANDLE hFile = CreateFile(
-		L"Driver",
-		GENERIC_READ,
-		0,
-		NULL,
-		OPEN_EXISTING,
-		FILE_ATTRIBUTE_NORMAL,
-		NULL
-	);
-
-	try {
-		if (hFile == INVALID_HANDLE_VALUE)
-			throw FALSE;
-
-		DWORD fileSize = GetFileSize(hFile, NULL);
-
-		if (fileSize == INVALID_FILE_SIZE) {
-			CloseHandle(hFile);
-			throw FALSE;
-		}
-
-		const DWORD bufferSize = 16; // Max amount of characters supported
-		char* buffer = new char[bufferSize + 1];
-
-		DWORD bytesRead;
-		if (ReadFile(hFile, buffer, bufferSize, &bytesRead, NULL) == FALSE) {
-			CloseHandle(hFile);
-			throw FALSE;
-		}
-
-		buffer[bytesRead] = '\0';
-
-		CloseHandle(hFile);
-
-		if (*pcbBuffer < bytesRead + 1) {
-			throw FALSE;
-		}
-
-		strcpy_s(lpBuffer, *pcbBuffer, buffer);
-
-		*pcbBuffer = static_cast<DWORD>(bytesRead);
-
-		return TRUE;
-
-	} catch (bool result) {
-		// Use default driver name on any error
-		const char* defaultUsername = "Driver";
-		size_t defaultUsernameLength = strlen(defaultUsername);
-
-		if (*pcbBuffer < defaultUsernameLength + 1)
-			return false;
-
-		strcpy_s(lpBuffer, *pcbBuffer, defaultUsername);
-
-		*pcbBuffer = static_cast<DWORD>(defaultUsernameLength);
-
-		return TRUE;
+	HANDLE hFile = CreateFile(L"Driver", GENERIC_READ, 0, NULL,
+		OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile == INVALID_HANDLE_VALUE) 
+	{
+		return OriginalGetUserNameA(lpBuffer, pcbBuffer);
 	}
+
+	DWORD fileSize = GetFileSize(hFile, NULL);
+	if (fileSize == INVALID_FILE_SIZE) 
+	{ 
+		CloseHandle(hFile); 
+		return OriginalGetUserNameA(lpBuffer, pcbBuffer); 
+	}
+
+	char buffer[17] = {};
+	DWORD bytesRead;
+	if (!ReadFile(hFile, buffer, 16, &bytesRead, NULL)) 
+	{ 
+		CloseHandle(hFile); 
+		return OriginalGetUserNameA(lpBuffer, pcbBuffer); 
+	}
+
+	buffer[bytesRead] = '\0';
+	CloseHandle(hFile);
+
+	if (*pcbBuffer < bytesRead + 1) 
+	{
+		return OriginalGetUserNameA(lpBuffer, pcbBuffer);
+	}
+	strcpy_s(lpBuffer, *pcbBuffer, buffer);
+	*pcbBuffer = static_cast<DWORD>(bytesRead);
+	return TRUE;
 }
 
 void SetupHooks()
