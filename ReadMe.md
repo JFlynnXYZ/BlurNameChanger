@@ -1,6 +1,6 @@
 # 📦 BlurNameChanger
 
-> *Your documentation is a direct reflection of your software, so hold it to the same standards.*
+> *Why is my online username my Windows username? Lets fix that!*
 
 
 ## 🌟 Highlights
