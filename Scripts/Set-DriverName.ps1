@@ -31,7 +31,7 @@ do {
     }
 } while ($Username.Length -eq 0 -or $Username.Length -gt 16)
 
-$DriverFilePath = Resolve-Path $(Join-Path $PSScriptRoot '..\BLUR\Driver')
+$DriverFilePath = Resolve-Path $(Join-Path $PSScriptRoot '..\Driver')
 
 # Write the name to the Driver file as plain ASCII with no trailing newline.
 # -NoNewline is important: ReadFile() in the DLL reads raw bytes, so a trailing

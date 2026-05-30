@@ -18,7 +18,7 @@ $ErrorActionPreference = 'Stop'
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-$ExeFullPath   = Join-Path $PSScriptRoot '..\BLUR\Blur.exe'
+$ExeFullPath   = Join-Path $PSScriptRoot '..\Blur.exe'
 $RuleNameIn    = 'Blur - Inbound'
 $RuleNameOut   = 'Blur - Outbound'
 $RuleGroup     = 'Blur Game'
